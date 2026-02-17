@@ -3,13 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>status — ookamitai</title>
+<title>status</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f5f5f0;
     --fg: #0a0a0a;
     --muted: #888;
+    --border: #0a0a0a;
+    --green: #0a0a0a;
+    --red: #0a0a0a;
+    --green-fill: #e8f5e8;
+    --red-fill: #fde8e8;
+    --dot-green: #1a1a1a;
+    --dot-red: #1a1a1a;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -17,6 +24,11 @@
       --bg: #0f0f0f;
       --fg: #e8e8e2;
       --muted: #555;
+      --border: #e8e8e2;
+      --green-fill: #0f0f0f;
+      --red-fill: #0f0f0f;
+      --dot-green: #e8e8e2;
+      --dot-red: #e8e8e2;
     }
   }
 
@@ -33,7 +45,10 @@
     padding: 2rem;
   }
 
-  .wrapper { width: 100%; max-width: 480px; }
+  .wrapper {
+    width: 100%;
+    max-width: 480px;
+  }
 
   header {
     border-bottom: 1px solid var(--fg);
@@ -46,30 +61,33 @@
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
+    color: var(--fg);
   }
 
   .subtitle {
-    font-size: 0.6rem;
+    font-size: 0.65rem;
     color: var(--muted);
     margin-top: 0.25rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
-  .cards { display: flex; flex-direction: column; }
+  .cards {
+    display: flex;
+    flex-direction: column;
+  }
 
   .card {
     border: 1px solid var(--fg);
     border-bottom: none;
     padding: 1rem 1.2rem;
-  }
-
-  .card:last-child { border-bottom: 1px solid var(--fg); }
-
-  .card-top {
     display: flex;
     align-items: center;
     gap: 1rem;
+  }
+
+  .card:last-child {
+    border-bottom: 1px solid var(--fg);
   }
 
   .dot {
@@ -81,11 +99,14 @@
     transition: background 0.3s;
   }
 
-  .card.up   .dot { background: var(--fg); }
+  .card.up   .dot { background: var(--dot-green); }
   .card.down .dot { background: transparent; }
-  .card.checking .dot { opacity: 0.3; }
+  .card.checking .dot { background: transparent; opacity: 0.4; }
 
-  .info { flex: 1; min-width: 0; }
+  .info {
+    flex: 1;
+    min-width: 0;
+  }
 
   .site-name {
     font-size: 0.72rem;
@@ -117,57 +138,9 @@
     display: block;
     font-size: 0.55rem;
     margin-top: 0.15rem;
+    letter-spacing: 0.05em;
     color: var(--muted);
     text-transform: none;
-    letter-spacing: 0.03em;
-  }
-
-  /* Uptime bar */
-  .uptime-row {
-    margin-top: 0.85rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--muted);
-    display: none;
-  }
-
-  .card.up .uptime-row,
-  .card.down .uptime-row { display: block; }
-
-  .uptime-stats {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 0.6rem;
-  }
-
-  .uptime-stat { }
-
-  .uptime-label {
-    font-size: 0.52rem;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .uptime-value {
-    font-size: 0.68rem;
-    font-weight: 500;
-    letter-spacing: 0.03em;
-    margin-top: 0.1rem;
-  }
-
-  .bar-wrap {
-    width: 100%;
-    height: 3px;
-    background: var(--muted);
-    opacity: 0.3;
-    position: relative;
-  }
-
-  .bar-fill {
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    background: var(--fg);
-    transition: width 0.6s ease;
   }
 
   footer {
@@ -199,7 +172,11 @@
     transition: background 0.15s, color 0.15s;
   }
 
-  .refresh-btn:hover { background: var(--fg); color: var(--bg); }
+  .refresh-btn:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+
   .refresh-btn:disabled { opacity: 0.3; pointer-events: none; }
 </style>
 </head>
@@ -212,26 +189,20 @@
 
   <div class="cards" id="cards">
     <div class="card checking" id="card-0">
-      <div class="card-top">
-        <div class="dot"></div>
-        <div class="info">
-          <div class="site-name">SD</div>
-          <div class="site-url">sd.ookamitai.com</div>
-        </div>
-        <div class="status-text" id="st-0">—</div>
+      <div class="dot"></div>
+      <div class="info">
+        <div class="site-name">SD</div>
+        <div class="site-url">sd.ookamitai.com</div>
       </div>
-      <div class="uptime-row" id="uptime-0"></div>
+      <div class="status-text" id="st-0">—</div>
     </div>
     <div class="card checking" id="card-1">
-      <div class="card-top">
-        <div class="dot"></div>
-        <div class="info">
-          <div class="site-name">Monitor</div>
-          <div class="site-url">monitor.ookamitai.com</div>
-        </div>
-        <div class="status-text" id="st-1">—</div>
+      <div class="dot"></div>
+      <div class="info">
+        <div class="site-name">Monitor</div>
+        <div class="site-url">monitor.ookamitai.com</div>
       </div>
-      <div class="uptime-row" id="uptime-1"></div>
+      <div class="status-text" id="st-1">—</div>
     </div>
   </div>
 
@@ -242,41 +213,7 @@
 </div>
 
 <script>
-  const WORKER_URL = "https://ookamitai-status.ookamitai2007.workers.dev/status";
-
-  function fmt(pct) {
-    if (pct === null || pct === undefined) return "—";
-    return parseFloat(pct).toFixed(2) + "%";
-  }
-
-  function renderUptime(id, r) {
-    const el = document.getElementById(`uptime-${id}`);
-    const pct30 = r.uptime_30d;
-    const pct7  = r.uptime_7d;
-    const pct24 = r.uptime_24h;
-    const barVal = pct30 !== null ? parseFloat(pct30) : 0;
-    const hasData = pct30 !== null;
-
-    el.innerHTML = hasData ? `
-      <div class="uptime-stats">
-        <div class="uptime-stat">
-          <div class="uptime-label">24h</div>
-          <div class="uptime-value">${fmt(pct24)}</div>
-        </div>
-        <div class="uptime-stat">
-          <div class="uptime-label">7d</div>
-          <div class="uptime-value">${fmt(pct7)}</div>
-        </div>
-        <div class="uptime-stat">
-          <div class="uptime-label">30d</div>
-          <div class="uptime-value">${fmt(pct30)}</div>
-        </div>
-      </div>
-      <div class="bar-wrap">
-        <div class="bar-fill" style="width:${barVal}%"></div>
-      </div>
-    ` : `<div class="uptime-label" style="font-size:0.55rem;color:var(--muted)">Collecting data…</div>`;
-  }
+  const WORKER_URL = "https://status-api.ookamitai.com";
 
   async function runChecks() {
     const btn = document.getElementById("refreshBtn");
@@ -305,8 +242,6 @@
           const label = r.status ? `HTTP ${r.status}` : (r.error || "Unreachable");
           st.innerHTML = `Offline<span class="sub">${label}</span>`;
         }
-
-        renderUptime(i, r);
       });
 
       const t = new Date(data.checked);
